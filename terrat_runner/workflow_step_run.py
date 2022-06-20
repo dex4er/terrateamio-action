@@ -31,10 +31,16 @@ def run(state, config):
                 proc = cmd.run(state, config)
 
             failed = not (proc.returncode == 0 or ignore_errors)
-        except cmd.MissingEnvVar as exn:
+        except cmd.MissingEnvVarError as exn:
             # On env error, add to 'error' key in output
             errors = state.output.get('errors', b'')
             errors += ('Missing environment variable: {}\n'.format(exn.args[0])).encode('utf-8')
+            state.output['errors'] = errors
+            failed = True
+        except cmd.MissingDirError as exn:
+            # On env error, add to 'error' key in output
+            errors = state.output.get('errors', b'')
+            errors += ('Directory not found: {}\n'.format(exn.args[0])).encode('utf-8')
             state.output['errors'] = errors
             failed = True
 

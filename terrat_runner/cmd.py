@@ -4,7 +4,11 @@ import string
 import subprocess
 
 
-class MissingEnvVar(Exception):
+class MissingEnvVarError(Exception):
+    pass
+
+
+class MissingDirError(Exception):
     pass
 
 
@@ -16,7 +20,7 @@ def _replace_vars(s, env):
     try:
         return string.Template(s).substitute(env)
     except KeyError as exn:
-        raise MissingEnvVar(*exn.args)
+        raise MissingEnvVarError(*exn.args)
 
 
 def _create_env(env, additional_env):
@@ -32,7 +36,11 @@ def run(state, config):
     # Replace any variables in the cmd
     cmd = [_replace_vars(s, env) for s in cmd]
     logging.debug('CMD : cmd=%r : cwd=%s', cmd, state.working_dir)
-    return subprocess.run(cmd, cwd=state.working_dir, env=env)
+    try:
+        return subprocess.run(cmd, cwd=state.working_dir, env=env)
+    except FileNotFoundError:
+        # TODO: We might also get this error if cmd does not exist?
+        raise MissingDirError(state.working_dir)
 
 
 def run_with_output(state, config):
@@ -41,10 +49,15 @@ def run_with_output(state, config):
     # Replace any variables in the cmd
     cmd = [_replace_vars(s, env) for s in cmd]
     logging.debug('CMD : cmd=%r : cwd=%s', cmd, state.working_dir)
-    proc = subprocess.Popen(cmd,
-                            cwd=state.working_dir,
-                            env=env,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT)
-    stdout, _ = proc.communicate()
-    return (proc, _strip_ansi(stdout.decode('utf-8')).encode('utf-8'))
+    try:
+        proc = subprocess.Popen(cmd,
+                                cwd=state.working_dir,
+                                env=env,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
+        stdout, _ = proc.communicate()
+        return (proc, _strip_ansi(stdout.decode('utf-8')).encode('utf-8'))
+    except FileNotFoundError:
+        # TODO: We might also get this error if cmd does not exist?
+        raise MissingDirError(state.working_dir)
+
