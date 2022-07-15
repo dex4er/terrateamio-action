@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env bash
 
 if [ "$TERRATEAM_PRE_ACTION" == "TRUE" ]; then
   exec /usr/local/bin/terrateam-pre-action.sh
