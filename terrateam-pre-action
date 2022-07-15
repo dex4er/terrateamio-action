@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 echo "Terrateam Pre-Action"
+
 if [ "$TERRATEAM_OIDC_AWS" == "TRUE" ]; then
   env "INPUT_AWS-REGION=${TERRATEAM_OIDC_AWS_REGION}" env "INPUT_ROLE-TO-ASSUME=${TERRATEAM_OIDC_AWS_ROLE_TO_ASSUME}" node /usr/local/bin/configure-aws-credentials
+fi
+
+if [ "$TERRATEAM_OIDC_GOOGLE" == "TRUE" ]; then
+  env "INPUT_WORKLOAD_IDENTITY_PROVIDER=${TERRATEAM_OIDC_GOOGLE_WORKLOAD_IDENTITY_PROVIDER}" env "INPUT_SERVICE_ACCOUNT=${TERRATEAM_OIDC_GOOGLE_SERVICE_ACCOUNT}" node /usr/local/bin/google-auth
 fi
