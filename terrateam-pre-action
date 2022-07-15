@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 
 echo "Terrateam Pre-Action"
+if [ "$TERRATEAM_OIDC_AWS" == "TRUE" ]; then
+  env "INPUT_AWS-REGION=${TERRATEAM_OIDC_AWS_REGION}" env "INPUT_ROLE-TO-ASSUME=${TERRATEAM_OIDC_AWS_ROLE_TO_ASSUME}" node /usr/local/bin/configure-aws-credentials
+fi
