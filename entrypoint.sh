@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ "$TERRATEAM_PRE_ACTION" == "TRUE" ]; then
-  exec /usr/local/bin/terrateam-pre-action.sh
+  exec /terrateam-pre-action
 fi
 
 WORK_TOKEN="$1"
