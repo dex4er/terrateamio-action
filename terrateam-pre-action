@@ -12,5 +12,6 @@ if [ "$TERRATEAM_OIDC_GOOGLE" == "TRUE" ]; then
 fi
 
 if [ "$TERRATEAM_OIDC_AZURE" == "TRUE" ]; then
+  /usr/local/bin/az
   env "INPUT_CLIENT_ID=${TERRATEAM_OIDC_AZURE_CLIENT_ID}" env "INPUT_TENANT_ID=${TERRATEAM_OIDC_AZURE_TENANT_ID}" env "INPUT_SUBSCRIPTION_ID=${TERRATEAM_OIDC_AZURE_SUBSCRIPTION_ID}" node /usr/local/bin/azure-login/index.js
 fi
